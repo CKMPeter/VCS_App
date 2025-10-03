@@ -1,0 +1,47 @@
+.title {
+    color: green;
+    text-align: center;
+    font-size: 5rem;
+}
+.main {
+    background-color: lightgreen;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;;
+}
+.side {
+    background-color: #e0e0e0;
+    padding: 15px;
+}
+.logo {
+    width: 50%;
+    height: 50%;
+}
+/*navigation bar*/
+.nav-bar {
+    list-style-type: none;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+.nav-bar li {
+    float: left;
+    text-decoration: none;
+    color: green;
+    font-weight: bold;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+/*checkin*/
+.button-add {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
