@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addUserWithImage, getUsers, deleteUser } from "../firebase/firebaseDB";
+import { addUserWithImage, getUsers } from "../firebase/firebaseDB";
 import { Member } from "./member";
 
 const styleSheet = {
@@ -57,12 +57,6 @@ export const Checkin = () => {
       setShowModal(false);
       fetchUsers();
     } catch (err) { console.error("Error adding user:", err); alert("Error adding user"); }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this user?")) return;
-    await deleteUser(id);
-    fetchUsers();
   };
 
   // Decide which users to render

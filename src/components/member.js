@@ -108,8 +108,20 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
     try {
-      await updateUser(id, form);
+      const updateData = { username: form.username };
+
+      // Only include file if user selected one
+      if (form.file) updateData.file = form.file;
+
+      // Always include schedule array, even if empty
+      updateData.schedule = form.selectedDays && form.selectedDays.length > 0
+        ? form.selectedDays
+        : [];
+
+      await updateUser(id, updateData);
+
       alert("User updated!");
       setShowModal(false);
     } catch (err) {
@@ -117,6 +129,7 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
       alert("Error updating user");
     }
   };
+
 
   const handleDelete = async () => {
     if (!window.confirm(`Are you sure you want to delete ${username}?`)) return;
