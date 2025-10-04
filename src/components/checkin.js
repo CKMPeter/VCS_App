@@ -112,7 +112,14 @@ export const Checkin = () => {
         <ul style={styleSheet.userList}>
           {displayedUsers.map(u => (
             <li key={u.id} style={styleSheet.userItem}>
-              <Member avatar={u.profile_picture} username={u.username} id={u.id} lastCheckinDate={u.lastCheckinDate}/>
+              <Member
+                avatar={u.profile_picture}
+                username={u.username}
+                id={u.id}
+                lastCheckinDate={u.lastCheckinDate}
+                showAll={showAll}
+                schedule={u.schedule || []}  
+              />
             </li>
           ))}
         </ul>
