@@ -28,7 +28,7 @@ const styleSheet = {
   containerText: { padding: "2rem", fontFamily: "monospace, Arial, sans-serif", textAlign: "center", backgroundColor: "transparent" },
   addButton: { padding: "0.5rem 1rem", cursor: "pointer", borderRadius: "1.5rem", backgroundColor: "#4CAF50", border: "none", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", fontWeight: "bold" },
   userList: { listStyle: "none", padding: 0, display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center", backgroundColor: "transparent" },
-  userItem: { display: "flex", alignItems: "center", marginBottom: "1.5vh", flexDirection: "column", backgroundColor: "transparent", fontWeight: "bold", color: "#333" },
+  userItem: { display: "flex", alignItems: "center", marginBottom: "1.5vh", flexDirection: "column", backgroundColor: "transparent", fontWeight: "bold", color: "#333", fontSize: "0.5rem" },
   modalOverlay: { position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999 },
   modalContent: { backgroundColor: "rgba(255,255,255,0.95)", padding: "2rem", borderRadius: "1rem", minWidth: "300px", maxWidth: "40vw" },
   form: { display: "flex", flexDirection: "column", gap: "1rem" },
@@ -180,7 +180,7 @@ export const Checkin = () => {
         </div>
       )}
 
-      <div style={{ textAlign: "center", padding: "0 2rem" }}>
+      <div style={{ textAlign: "center", padding: "0 1rem" }}>
         <ul style={styleSheet.userList}>
           {displayedUsers.map(u => (
             <li key={u.id} style={styleSheet.userItem}>
