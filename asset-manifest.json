@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/VCS_App/static/css/main.39a4bc66.css",
-    "main.js": "/VCS_App/static/js/main.fd33f545.js",
+    "main.js": "/VCS_App/static/js/main.04ffeb2e.js",
     "static/media/bootstrap-icons.woff?": "/VCS_App/static/media/bootstrap-icons.1295669cd4e305c97f2c.woff",
     "static/media/bootstrap-icons.woff2?": "/VCS_App/static/media/bootstrap-icons.92ea18a81d737146ff04.woff2",
     "index.html": "/VCS_App/index.html",
     "main.39a4bc66.css.map": "/VCS_App/static/css/main.39a4bc66.css.map",
-    "main.fd33f545.js.map": "/VCS_App/static/js/main.fd33f545.js.map"
+    "main.04ffeb2e.js.map": "/VCS_App/static/js/main.04ffeb2e.js.map"
   },
   "entrypoints": [
     "static/css/main.39a4bc66.css",
-    "static/js/main.fd33f545.js"
+    "static/js/main.04ffeb2e.js"
   ]
 }
