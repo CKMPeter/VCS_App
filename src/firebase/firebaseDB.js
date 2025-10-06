@@ -108,12 +108,22 @@ export async function addUserWithImage(user) {
 export async function updateUser(id, data) {
   try {
     const userRef = ref(db, `users/${id}`);
-    await update(userRef, data);
+    const updatedData = { ...data };
+
+    // If a file is provided, convert it to Base64
+    if (data.file) {
+      updatedData.profile_picture = await fileToBase64(data.file, 100, 100);
+      delete updatedData.file; // Remove raw file so we don't store it
+    }
+
+    await update(userRef, updatedData);
     console.log("User updated with ID:", id);
   } catch (e) {
     console.error("Error updating user:", e);
+    throw e;
   }
 }
+
 
 // DELETE USER
 export async function deleteUser(id) {
