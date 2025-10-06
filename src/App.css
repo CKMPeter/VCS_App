@@ -45,3 +45,23 @@
     cursor: pointer;
     font-size: 1rem;
 }
+.user-list {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+}
+
+@media (max-width: 600px) {
+  .user-list {
+    flex-direction: column;
+    align-items: center;
+  }
+  .user-item {
+    width: 100vw;
+    min-width: 0;
+    margin-bottom: 2rem;
+  }
+}
