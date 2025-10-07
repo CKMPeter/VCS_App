@@ -171,7 +171,7 @@ export async function incrementPresent(id) {
     const dayOfMonth = new Date().getDate();
     if (dayOfMonth === 1) {
       checkinDates = [];
-      await update(userRef, { present: 0, checkinDates: [] });
+      await update(userRef, { present: 0, checkinDates: [], lastCheckinDate: "" });
     }
 
     // Check if already checked in today
@@ -180,14 +180,15 @@ export async function incrementPresent(id) {
       return;
     }
 
-    // Update present + add today's date
+    // ✅ Update present, checkinDates, and lastCheckinDate
     await update(userRef, {
       present: currentPresent + 1,
       checkinDates: [...checkinDates, today],
+      lastCheckinDate: today, // <-- this is what makes it turn green after refresh
     });
 
     console.log(
-      `User ${id} present incremented to ${currentPresent + 1}, checkinDates = [${[...checkinDates, today]}]`
+      `User ${id} present incremented to ${currentPresent + 1}, lastCheckinDate = ${today}`
     );
   } catch (e) {
     console.error("Error incrementing present:", e);

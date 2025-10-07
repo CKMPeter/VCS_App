@@ -209,19 +209,22 @@ export const Checkin = () => {
                 lastCheckinDate={u.lastCheckinDate}
                 showAll={showAll}
                 schedule={u.schedule || []}
-                onUpdate={(id, updatedData) => {
-                  setUsers(prevUsers =>
-                    prevUsers.map(user => user.id === id ? { ...user, ...updatedData } : user)
+                onUpdate={(id, data) => {
+                  setUsers(prev =>
+                    prev.map(user => user.id === id ? { ...user, ...data } : user)
                   );
-                }}
-                onDelete={(id) => {
-                  setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
                 }}
               />
               <p>{u.username}</p>
             </li>
           ))}
         </ul>
+      </div>
+
+      <div style={{ textAlign: "center", marginTop: "2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
+        <button style={{ ...styleSheet.addButton, backgroundColor: "#8e44ad" }}>
+          <a href="#/detail" style={{ textDecoration: "none", color: "white" }}>View Members Summary</a>
+        </button>
       </div>
     </div>
   </div>

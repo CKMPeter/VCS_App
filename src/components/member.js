@@ -91,11 +91,13 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
     setIsGreen(true);
     try {
       await incrementPresent(id);
+      if (onUpdate) onUpdate(id, { lastCheckinDate: today }); // ✅ notify parent
     } catch (err) {
       console.error("Error incrementing present:", err);
       setIsGreen(false);
     }
   };
+
 
   const handleDayToggle = (day) => {
     setForm(prev => {
@@ -121,8 +123,9 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
       alert("User updated!");
       setShowModal(false);
 
+      const today = new Date().toISOString().split("T")[0]; // ✅ define here
       // ✅ Notify parent to refresh or update this user in state
-      if (onUpdate) onUpdate(id, updateData);
+      if (onUpdate) onUpdate(id, { lastCheckinDate: today });
 
     } catch (err) {
       console.error("Error updating user:", err);
