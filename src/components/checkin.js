@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addUserWithImage, getUsers } from "../firebase/firebaseDB";
+import { addUserWithImage, getUsers, fileToBase64 } from "../firebase/firebaseDB";
 import { Member } from "./member";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -72,15 +72,33 @@ export const Checkin = () => {
     });
   };
 
-  const handleAdd = async (e) => {
+ const handleAdd = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.email || !form.file) { alert("Fill in all fields."); return; }
+    if (!form.username || !form.email || !form.file) { 
+      alert("Fill in all fields."); 
+      return; 
+    }
     try {
-      await addUserWithImage(form);
+      const newUserId = await addUserWithImage(form);
+
+      const newUser = {
+        id: newUserId,
+        username: form.username,
+        email: form.email,
+        schedule: form.selectedDays,
+        profile_picture: await fileToBase64(form.file, 100, 100),
+        present: 0,
+        checkinDates: [],
+      };
+
+      setUsers(prev => [...prev, newUser]); // add to state immediately
+
       setForm({ username: "", email: "", file: null, selectedDays: [] });
       setShowModal(false);
-      fetchUsers();
-    } catch (err) { console.error("Error adding user:", err); alert("Error adding user"); }
+    } catch (err) { 
+      console.error("Error adding user:", err); 
+      alert("Error adding user"); 
+    }
   };
 
   // ---------------- Smart Search Filter ----------------
@@ -190,7 +208,15 @@ export const Checkin = () => {
                 id={u.id}
                 lastCheckinDate={u.lastCheckinDate}
                 showAll={showAll}
-                schedule={u.schedule || []}  
+                schedule={u.schedule || []}
+                onUpdate={(id, updatedData) => {
+                  setUsers(prevUsers =>
+                    prevUsers.map(user => user.id === id ? { ...user, ...updatedData } : user)
+                  );
+                }}
+                onDelete={(id) => {
+                  setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+                }}
               />
               <p>{u.username}</p>
             </li>

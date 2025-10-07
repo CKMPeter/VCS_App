@@ -2,7 +2,7 @@ import { ref, push, get, update, remove } from "firebase/database";
 import { db } from "./firebase";
 
 // Helper: convert File to small Base64 thumbnail
-function fileToBase64(file, maxWidth = 200, maxHeight = 200) {
+export function fileToBase64(file, maxWidth = 200, maxHeight = 200) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -68,22 +68,19 @@ export async function getUser(id) {
   }
 }
 
-// ADD USER (with resized image, using lastCheckinDate instead of checkedIn)
+// ADD USER (with checkinDates as an array)
 export async function addUserWithImage(user) {
   try {
-      let profile_picture = "";
+    let profile_picture = "";
 
-      if (user.file) {
-        // If user uploaded file → convert to base64
-        profile_picture = await fileToBase64(user.file, 100, 100);
-      } else {
-        // Use a placeholder image
-        const placeholderUrl = "/placeholder.png"; // put placeholder in public/pictures
-        const response = await fetch(placeholderUrl);
-        const blob = await response.blob();
-        profile_picture = await fileToBase64(blob, 100, 100);
-      }
-
+    if (user.file) {
+      profile_picture = await fileToBase64(user.file, 100, 100);
+    } else {
+      const placeholderUrl = "/placeholder.png";
+      const response = await fetch(placeholderUrl);
+      const blob = await response.blob();
+      profile_picture = await fileToBase64(blob, 100, 100);
+    }
 
     const usersRef = ref(db, "users");
     const newUser = {
@@ -92,7 +89,7 @@ export async function addUserWithImage(user) {
       profile_picture,
       schedule: user.selectedDays || [],
       present: user.present || 0,
-      lastCheckinDate: user.lastCheckinDate || "" // <-- new system (string date)
+      checkinDates: user.checkinDates || [] // <-- store array of dates
     };
 
     const newUserRef = await push(usersRef, newUser);
@@ -103,7 +100,6 @@ export async function addUserWithImage(user) {
     throw e;
   }
 }
-
 // UPDATE USER
 export async function updateUser(id, data) {
   try {
@@ -154,8 +150,6 @@ export async function getUsersBySchedule(day) {
 }
 
 // -------------------- ATTENDANCE --------------------
-
-// INCREMENT USER'S PRESENT COUNT BY 1 (once per day)
 export async function incrementPresent(id) {
   try {
     const userRef = ref(db, `users/${id}`);
@@ -168,24 +162,32 @@ export async function incrementPresent(id) {
 
     const data = snapshot.val();
     const currentPresent = data.present || 0;
+    let checkinDates = Array.isArray(data.checkinDates) ? data.checkinDates : [];
 
     // Today in YYYY-MM-DD format
     const today = new Date().toISOString().split("T")[0];
 
+    // If today is the 1st of the month, reset checkinDates and present
+    const dayOfMonth = new Date().getDate();
+    if (dayOfMonth === 1) {
+      checkinDates = [];
+      await update(userRef, { present: 0, checkinDates: [] });
+    }
+
     // Check if already checked in today
-    if (data.lastCheckinDate === today) {
+    if (checkinDates.includes(today)) {
       console.log(`User ${id} already checked in today.`);
       return;
     }
 
-    // Update present + set today's date
+    // Update present + add today's date
     await update(userRef, {
       present: currentPresent + 1,
-      lastCheckinDate: today,
+      checkinDates: [...checkinDates, today],
     });
 
     console.log(
-      `User ${id} present incremented to ${currentPresent + 1}, lastCheckinDate = ${today}`
+      `User ${id} present incremented to ${currentPresent + 1}, checkinDates = [${[...checkinDates, today]}]`
     );
   } catch (e) {
     console.error("Error incrementing present:", e);

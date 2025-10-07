@@ -65,7 +65,7 @@ const styleSheet = {
 
 const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-export function Member({ id, avatar, username, lastCheckinDate, showAll, schedule = [], onDelete }) {
+export function Member({ id, avatar, username, lastCheckinDate, showAll, schedule = [], onDelete, onUpdate }) {
   const [isGreen, setIsGreen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
@@ -111,11 +111,7 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
 
     try {
       const updateData = { username: form.username };
-
-      // Only include file if user selected one
       if (form.file) updateData.file = form.file;
-
-      // Always include schedule array, even if empty
       updateData.schedule = form.selectedDays && form.selectedDays.length > 0
         ? form.selectedDays
         : [];
@@ -124,12 +120,15 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
 
       alert("User updated!");
       setShowModal(false);
+
+      // ✅ Notify parent to refresh or update this user in state
+      if (onUpdate) onUpdate(id, updateData);
+
     } catch (err) {
       console.error("Error updating user:", err);
       alert("Error updating user");
     }
   };
-
 
   const handleDelete = async () => {
     if (!window.confirm(`Are you sure you want to delete ${username}?`)) return;
