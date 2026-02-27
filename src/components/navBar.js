@@ -1,14 +1,13 @@
-import React from 'react'
-
+import React from "react" 
+  
 export const NavBar = () => {
-    return (<>
-            <div>
-                <ul class="nav-bar">
-                    <li>Home</li>
-                    <li>About</li>
-                    <li>Contact</li>
-                </ul>
-            </div>
-        </>) 
+    return (
+        <div>
+            <ul className="nav-bar">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#/checkin">Check-in</a></li>
+                <li><a href="/#/detail">Details</a></li>
+            </ul>
+        </div>
+    ) 
 }
- 

@@ -253,49 +253,101 @@ export const Checkin = () => {
         <h1 style={styleSheet.title}>CHECK IN - {today}</h1>
       </div>
 
-      <div style={{ textAlign: "center", marginBottom: "2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
-        {!searchBar && (
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", alignItems: "center" }}>
-            {/* Add User Button */}
-            <button style={styleSheet.addButton} onClick={() => setShowModal(true)}>
-              <i className="bi bi-person-fill fs-5"></i> Add
-            </button>
+  <div
+    style={{
+      textAlign: "center",
+      marginBottom: "2rem",
+      display: "flex",
+      justifyContent: "center",
+      padding: "0 1rem",
+    }}
+  >
+    {!searchBar ? (
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap", // ✅ key for responsiveness
+          width: "100%",
+          maxWidth: "900px",
+        }}
+      >
+        <button style={styleSheet.addButton} onClick={() => setShowModal(true)}>
+          <i className="bi bi-person-fill fs-5"></i> Add
+        </button>
 
-            {/* Show All / Show Today Button */}
-            <button style={{ ...styleSheet.addButton, backgroundColor: "#2196F3" }} onClick={() => setShowAll(prev => !prev)}>
-              <i className="bi bi-calendar-check fs-5"></i> {showAll ? "Show Today" : "Show All"}
-            </button>
+        <button
+          style={{ ...styleSheet.addButton, backgroundColor: "#2196F3" }}
+          onClick={() => setShowAll(prev => !prev)}
+        >
+          <i className="bi bi-calendar-check fs-5"></i>
+          {showAll ? "Show Today" : "Show All"}
+        </button>
 
-            {/* Search Button */}
-            <button style={{ ...styleSheet.addButton, backgroundColor: "#f39c12" }} onClick={() => setSearchBar(true)}>
-              <i className="bi bi-search fs-5"></i> Search
-            </button>
+        <button
+          style={{ ...styleSheet.addButton, backgroundColor: "#f39c12" }}
+          onClick={() => setSearchBar(true)}
+        >
+          <i className="bi bi-search fs-5"></i> Search
+        </button>
 
-          {/* View Summary Button */}
-            <button style={{ ...styleSheet.addButton, backgroundColor: "#8e44ad" }}>
-              <a href="#/detail" style={{ textDecoration: "none", color: "white" }}>View Members Summary</a>
-            </button>
-          </div>
-        )}
-        {searchBar && (
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <input 
-              type="text"
-              placeholder="Search by username"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: "0.5rem", fontSize: "1rem", borderRadius: "0.5rem", border: "1px solid #ccc" }}
-            />
-            <button 
-              style={{...styleSheet.addButton, backgroundColor: "#e67e22"}}
-              onClick={() => { setSearchBar(false); setSearchQuery(""); }}
-            >
-              Close
-            </button>
-          </div>
-        )}
+        <button
+          style={{ ...styleSheet.addButton, backgroundColor: "#8e44ad" }}
+        >
+          <a
+            href="#/detail"
+            style={{
+              textDecoration: "none",
+              color: "white",
+              width: "100%",
+              display: "block",
+            }}
+          >
+            View Members Summary
+          </a>
+        </button>
       </div>
+    ) : (
+      <div
+        style={{
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "center",
+          flexWrap: "wrap", // ✅ responsive search layout
+          width: "100%",
+          maxWidth: "600px",
+          justifyContent: "center",
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Search by username"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            padding: "0.6rem",
+            fontSize: "1rem",
+            borderRadius: "0.5rem",
+            border: "1px solid #ccc",
+            flex: "1 1 200px", // ✅ responsive width
+            minWidth: "150px",
+          }}
+        />
 
+        <button
+          style={{ ...styleSheet.addButton, backgroundColor: "#e67e22" }}
+          onClick={() => {
+            setSearchBar(false);
+            setSearchQuery("");
+          }}
+        >
+          Close
+        </button>
+      </div>
+    )}
+  </div>
       {showModal && (
         <div style={styleSheet.modalOverlay} onClick={() => setShowModal(false)}>
           <div style={styleSheet.modalContent} onClick={e => e.stopPropagation()}>
