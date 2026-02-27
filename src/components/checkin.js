@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addUserWithImage, getUsers, fileToBase64 } from "../firebase/firebaseDB";
 import { Member } from "./member";
+import { LatePermissionList } from "./latePermissionList";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const styleSheet = {
@@ -9,6 +10,7 @@ const styleSheet = {
     minHeight: "100vh",
     paddingBottom: "2rem",
     overflow: "hidden",
+    fontSize: "1rem",
   },
   logoImage: {
     position: "absolute",
@@ -24,17 +26,113 @@ const styleSheet = {
     position: "relative",
     zIndex: 1,
   },
-  title: { fontSize: "3rem", fontWeight: "bold", marginBottom: "1.5rem", color: "green" },
-  containerText: { padding: "2rem", fontFamily: "monospace, Arial, sans-serif", textAlign: "center", backgroundColor: "transparent" },
-  addButton: { padding: "0.5rem 1rem", cursor: "pointer", borderRadius: "1.5rem", backgroundColor: "#4CAF50", border: "none", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", fontWeight: "bold" },
-  userList: { listStyle: "none", padding: 0, display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center", backgroundColor: "transparent" },
-  userItem: { display: "flex", alignItems: "center", marginBottom: "1.5vh", flexDirection: "column", backgroundColor: "transparent", fontWeight: "bold", color: "#333", fontSize: "0.5rem" },
-  modalOverlay: { position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999 },
-  modalContent: { backgroundColor: "rgba(255,255,255,0.95)", padding: "2rem", borderRadius: "1rem", minWidth: "300px", maxWidth: "40vw" },
-  form: { display: "flex", flexDirection: "column", gap: "1rem" },
-  input: { padding: "0.75rem", fontSize: "1rem" },
-  submitButton: { padding: "0.75rem 1.5rem", cursor: "pointer", marginRight: "1rem", backgroundColor: "#4CAF50", color: "#fff", border: "none", borderRadius: "0.5rem" },
-  cancelButton: { padding: "0.75rem 1.5rem", cursor: "pointer", marginLeft: "1rem", backgroundColor: "#f44336", color: "#fff", border: "none", borderRadius: "0.5rem" },
+  title: { 
+    fontSize: "3rem", 
+    fontWeight: "bold", 
+    marginBottom: "1.5rem", 
+    color: "green" 
+  },
+  containerText: { 
+    padding: "2rem", 
+    fontFamily: "monospace, Arial, sans-serif",
+    textAlign: "center", 
+    backgroundColor: "transparent" 
+  },
+  addButton: { 
+    padding: "0.5rem 1rem", 
+    cursor: "pointer", 
+    borderRadius: "1.5rem", 
+    backgroundColor: "#4CAF50", 
+    border: "none", 
+    color: "#fff", 
+    display: "flex", 
+    alignItems: "center", 
+    gap: "0.5rem", 
+    fontSize: "1rem", 
+    fontWeight: "bold" 
+  },
+  userList: { 
+    listStyle: "none", 
+    padding: 0, 
+    display: "flex", 
+    gap: "1rem", 
+    flexWrap: "wrap", 
+    justifyContent: "center", 
+    backgroundColor: "transparent",
+  },
+  username: {
+    marginTop: "0.5rem",
+    fontSize: "1rem",
+    fontWeight: "bold",
+    color: "#333"
+  },
+  userItem: { 
+    display: "flex", 
+    alignItems: "center", 
+    marginBottom: "1.5vh", 
+    flexDirection: "column", 
+    backgroundColor: "transparent", 
+    fontWeight: "bold", 
+    color: "#333", 
+    fontSize: "0.5rem" 
+  },
+  modalOverlay: { 
+    position: "fixed", 
+    top: 0, 
+    left: 0, 
+    width: "100vw", 
+    height: "100vh", 
+    backgroundColor: "rgba(0,0,0,0.5)", 
+    display: "flex",
+     justifyContent: "center", 
+     alignItems: "center", 
+     zIndex: 999 
+    },
+  modalContent: { 
+    backgroundColor: "rgba(255,255,255,0.95)", 
+    padding: "2rem", 
+    borderRadius: "1rem", 
+    minWidth: "300px", 
+    maxWidth: "40vw" 
+  },
+  form: { 
+    display: "flex", 
+    flexDirection: "column", 
+    gap: "1rem" 
+  },
+  input: {
+    padding: "0.5rem",
+    fontSize: "1rem",
+    width: "inherit",
+    fontWeight: "bold",
+    border: "1px solid #ccc",
+    borderRadius: "0.5rem"
+  },
+  submitButton: { 
+    padding: "0.75rem 1.5rem",
+     cursor: "pointer", 
+     marginRight: "1rem", 
+     backgroundColor: "#4CAF50", 
+     color: "#fff", 
+     border: "none", 
+     borderRadius: "0.5rem"
+  },
+  cancelButton: { 
+    padding: "0.75rem 1.5rem", 
+    cursor: "pointer", 
+    marginLeft: "1rem", 
+    backgroundColor: "#f44336", 
+    color: "#fff", 
+    border: "none", 
+    borderRadius: "0.5rem"
+  },
+  button: {
+    padding: "0.75rem 1.5rem",
+    border: "none",
+    borderRadius: "0.5rem",
+    cursor: "pointer",
+    fontWeight: "bold"
+  },
 };
 
 const daysOfWeek = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -49,14 +147,32 @@ export const Checkin = () => {
 
   const today = daysOfWeek[new Date().getDay()];
 
+  // For SheetBest data (Late Permission)
+  const [data, setData] = useState([]);
+
+  // Fetch users on mount and whenever today changes (to refresh check-in status)
   useEffect(() => { fetchUsers(); }, [today]);
 
   const fetchUsers = async () => {
     try {
       const allUsers = await getUsers();
+      const lateData = await fetchLatePermissions();
+      // You can merge lateData with allUsers here if needed, depending on your data structure
       setUsers(allUsers);
+      setData(lateData);
     } catch (err) { console.error("Error fetching users:", err); }
   };
+
+  const fetchLatePermissions = async () => {
+    try {
+      const response = await fetch(process.env.REACT_APP_SHEET_BEST_URL);
+      const data = await response.json();
+      console.log("Late Permissions Data:", data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching late permissions:", err);
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -139,7 +255,7 @@ export const Checkin = () => {
 
       <div style={{ textAlign: "center", marginBottom: "2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
         {!searchBar && (
-          <div style={{ display: "flex", gap: "1rem" }}>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", alignItems: "center" }}>
             {/* Add User Button */}
             <button style={styleSheet.addButton} onClick={() => setShowModal(true)}>
               <i className="bi bi-person-fill fs-5"></i> Add
@@ -153,6 +269,11 @@ export const Checkin = () => {
             {/* Search Button */}
             <button style={{ ...styleSheet.addButton, backgroundColor: "#f39c12" }} onClick={() => setSearchBar(true)}>
               <i className="bi bi-search fs-5"></i> Search
+            </button>
+
+          {/* View Summary Button */}
+            <button style={{ ...styleSheet.addButton, backgroundColor: "#8e44ad" }}>
+              <a href="#/detail" style={{ textDecoration: "none", color: "white" }}>View Members Summary</a>
             </button>
           </div>
         )}
@@ -181,7 +302,25 @@ export const Checkin = () => {
             <form onSubmit={handleAdd} style={styleSheet.form}>
               <input type="text" name="username" placeholder="Username" value={form.username} onChange={handleChange} style={styleSheet.input}/>
               <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} style={styleSheet.input}/>
-              <input type="file" name="file" accept="image/*" onChange={handleChange} style={styleSheet.input}/>
+              <label style={{
+                ...styleSheet.button,
+                backgroundColor: "#2196F3",
+                color: "white",
+                textAlign: "center",
+                cursor: "pointer",
+                display: "inline-block",
+                fontSize: "0.9rem",
+              }}>
+                {form.file ? form.file.name : "Choose Image"}
+                
+                <input
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  onChange={handleChange}
+                  style={{ display: "none" }}
+                />
+              </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
                 {daysOfWeek.map(day => (
                   <label key={day} style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
@@ -189,7 +328,7 @@ export const Checkin = () => {
                   </label>
                 ))}
               </div>
-              <div style={{ display: "flex", justifyContent: "flex-start", gap: "1rem" }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
                 <button type="submit" style={styleSheet.submitButton}>Submit</button>
                 <button type="button" onClick={() => setShowModal(false)} style={styleSheet.cancelButton}>Cancel</button>
               </div>
@@ -215,17 +354,13 @@ export const Checkin = () => {
                   );
                 }}
               />
-              <p>{u.username}</p>
+              <p style={styleSheet.username}>{u.username}</p>
             </li>
           ))}
         </ul>
       </div>
-
-      <div style={{ textAlign: "center", marginTop: "2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
-        <button style={{ ...styleSheet.addButton, backgroundColor: "#8e44ad" }}>
-          <a href="#/detail" style={{ textDecoration: "none", color: "white" }}>View Members Summary</a>
-        </button>
-      </div>
+      
+      <LatePermissionList data={data} />
     </div>
   </div>
   );

@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# Check-In App (Attendance Tracking System)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web-based application designed to track and manage member attendance in real time.
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+Frontend: React.js
 
-### `npm start`
+Backend / Database: Firebase
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Data Integration: Sheet.best (API for Google Sheets)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Form Input: Google Forms
 
-### `npm test`
+## System Flow
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Data Collection
+Members submit their attendance via Google Form
 
-### `npm run build`
+Data Storage
+Responses are automatically recorded in Google Sheets
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+API Layer
+Sheet.best converts the Google Sheet into a REST API
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Web Application
+The React web app fetches and displays attendance data
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Key Features
 
-### `npm run eject`
+Real-time attendance tracking
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Easy form-based check-in
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Centralized data management via Google Sheets
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Live data display on web dashboard
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Scalable with Firebase integration
 
-## Learn More
+## Prerequisites
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Make sure you have installed:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Node.js (v16 or higher recommended)
 
-### Code Splitting
+- npm (comes with Node.js)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- A code editor like Visual Studio Code
 
-### Analyzing the Bundle Size
+- A Google account (for Google Forms & Sheets)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- A Firebase project (if using authentication / realtime features)
 
-### Making a Progressive Web App
+## Installation
+Clone the project and install dependencies:
+``` bash
+git clone <your-repo-url>
+cd your-project-folder
+npm install
+```
+- Running in Development
+    - Start the development server:
+    ``` bash
+    npm run start
+    ```
+    App runs at: http://localhost:3000
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+    Auto-reloads when you make changes
 
-### Advanced Configuration
+- Production Build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    - To create an optimized production build:
+    ``` bash
+        npm run build
+    ```

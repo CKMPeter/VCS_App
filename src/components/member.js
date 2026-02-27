@@ -51,8 +51,10 @@ const styleSheet = {
   input: {
     padding: "0.5rem",
     fontSize: "1rem",
-    marginBottom: "1rem",
-    width: "inherit"
+    width: "inherit",
+    fontWeight: "bold",
+    border: "1px solid #ccc",
+    borderRadius: "0.5rem"
   },
   button: {
     padding: "0.75rem 1.5rem",
@@ -60,6 +62,16 @@ const styleSheet = {
     borderRadius: "0.5rem",
     cursor: "pointer",
     fontWeight: "bold"
+  },
+  checkBox: {
+    width: "16px",
+    height: "16px",
+    cursor: "pointer",
+    accentColor: "#4CAF50",
+    fontSize: "1rem",
+    border: "1px solid #ccc",
+    borderRadius: "0.25rem",
+    paddingBottom: "0.25rem"
   }
 };
 
@@ -86,12 +98,13 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
     }
 
     const today = new Date().toISOString().split("T")[0];
-    if (lastCheckinDate === today || isGreen) return;
+    //if (lastCheckinDate === today || isGreen) return;
 
-    setIsGreen(true);
+    // setIsGreen(true);
+    setIsGreen(prev => !prev);
     try {
       await incrementPresent(id);
-      if (onUpdate) onUpdate(id, { lastCheckinDate: today }); // ✅ notify parent
+      if (onUpdate) onUpdate(id, { lastCheckinDate: today }); 
     } catch (err) {
       console.error("Error incrementing present:", err);
       setIsGreen(false);
@@ -125,8 +138,15 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
 
       const today = new Date().toISOString().split("T")[0]; // ✅ define here
       // ✅ Notify parent to refresh or update this user in state
-      if (onUpdate) onUpdate(id, { lastCheckinDate: today });
+      // add this line (use whatever variable holds current user data)
+      //const isSameDay = username?.lastCheckinDate === today;
+      const isSameDay = lastCheckinDate === today;
 
+      if (onUpdate) {
+        onUpdate(id, {
+          lastCheckinDate: isSameDay ? null : today
+        });
+      }
     } catch (err) {
       console.error("Error updating user:", err);
       alert("Error updating user");
@@ -179,7 +199,7 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
             style={styleSheet.modalContent}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ marginBottom: "1rem" }}>Update Member</h2>
+            <h2 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>Update Member</h2>
             <form
               onSubmit={handleUpdate}
               style={{ display: "flex", flexDirection: "column", gap: "1rem", padding: "1rem", overflowY: "auto", maxHeight: "80vh" }}
@@ -192,16 +212,28 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
                 placeholder="Username"
                 style={styleSheet.input}
               />
-              <input
-                type="file"
-                name="file"
-                accept="image/*"
-                onChange={handleChange}
-                style={styleSheet.input}
-              />
+              <label style={{
+                ...styleSheet.button,
+                backgroundColor: "#2196F3",
+                color: "white",
+                textAlign: "center",
+                cursor: "pointer",
+                display: "inline-block",
+                fontSize: "0.9rem",
+              }}>
+                {form.file ? form.file.name : "Choose Image"}
+                
+                <input
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  onChange={handleChange}
+                  style={{ display: "none" }}
+                />
+              </label>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", textAlign: "left" }}>
-                <h4>Schedule</h4>
+                <h4 style={{ fontSize: "1rem", margin: "0"}}>Schedule</h4>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {daysOfWeek.map(day => (
                     <label key={day} style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
@@ -209,6 +241,7 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
                         type="checkbox"
                         checked={form.selectedDays.includes(day)}
                         onChange={() => handleDayToggle(day)}
+                        style={styleSheet.checkBox}
                       />
                       {day}
                     </label>
@@ -216,7 +249,7 @@ export function Member({ id, avatar, username, lastCheckinDate, showAll, schedul
                 </div>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}

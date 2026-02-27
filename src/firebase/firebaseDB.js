@@ -2,7 +2,7 @@ import { ref, push, get, update, remove } from "firebase/database";
 import { db } from "./firebase";
 
 // Helper: convert File to small Base64 thumbnail
-export function fileToBase64(file, maxWidth = 200, maxHeight = 200) {
+export function fileToBase64(file, maxWidth = 400, maxHeight = 400) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -171,25 +171,37 @@ export async function incrementPresent(id) {
     const dayOfMonth = new Date().getDate();
     if (dayOfMonth === 1) {
       checkinDates = [];
-      await update(userRef, { present: 0, checkinDates: [], lastCheckinDate: "" });
+      await update(userRef, { present: 0, checkinDates: [], lastCheckinDate: null });
     }
 
-    // Check if already checked in today
-    if (checkinDates.includes(today)) {
-      console.log(`User ${id} already checked in today.`);
+    // 🔥 TOGGLE LOGIC
+    const alreadyChecked = checkinDates.includes(today);
+
+    if (alreadyChecked) {
+      // ❌ REMOVE check-in
+      const updatedDates = checkinDates.filter(date => date !== today);
+
+      await update(userRef, {
+        present: Math.max(currentPresent - 1, 0),
+        checkinDates: updatedDates,
+        lastCheckinDate: null
+      });
+
+      console.log(`User ${id} check-in removed`);
       return;
     }
 
-    // ✅ Update present, checkinDates, and lastCheckinDate
+    // ✅ ADD check-in
     await update(userRef, {
       present: currentPresent + 1,
       checkinDates: [...checkinDates, today],
-      lastCheckinDate: today, // <-- this is what makes it turn green after refresh
+      lastCheckinDate: today,
     });
 
     console.log(
       `User ${id} present incremented to ${currentPresent + 1}, lastCheckinDate = ${today}`
     );
+
   } catch (e) {
     console.error("Error incrementing present:", e);
   }
