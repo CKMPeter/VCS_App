@@ -1,6 +1,7 @@
 # Check-In App (Attendance Tracking System)
 
 A web-based application designed to track and manage member attendance in real time.
+[Verdancy](https://ckmpeter.github.io/VCS_App/#/checkin)
 
 ## Tech Stack
 
