@@ -412,7 +412,7 @@ export const Checkin = () => {
         </ul>
       </div>
       
-      <LatePermissionList data={data} />
+      {/* <LatePermissionList data={data} /> */}
     </div>
   </div>
   );
